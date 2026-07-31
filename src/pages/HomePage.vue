@@ -1,12 +1,22 @@
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useGifsStore } from '@/stores/gifs'
+import GifCard from '@/components/gif/GifCard.vue'
+import GifDetailsModal from '@/components/gif/GifDetailsModal.vue'
 
 const gifsStore = useGifsStore()
+
+const showModal = ref(false)
+const selectedGif = ref(null)
 
 onMounted(() => {
   gifsStore.loadTrending()
 })
+
+function openDetails(gif) {
+  selectedGif.value = gif
+  showModal.value = true
+}
 </script>
 
 <template>
@@ -17,18 +27,16 @@ onMounted(() => {
     <div v-else-if="gifsStore.error" class="text-red-500">{{
       gifsStore.error
     }}</div>
+
     <div v-else class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div
+      <GifCard
         v-for="gif in gifsStore.gifsToDisplay"
         :key="gif.id"
-        class="rounded-lg overflow-hidden shadow-md"
-      >
-        <img
-          :src="gif.images.fixed_height.url"
-          :alt="gif.title"
-          class="w-full object-cover"
-        />
-      </div>
+        :gif="gif"
+        @open-details="openDetails"
+      />
     </div>
+
+    <GifDetailsModal v-model="showModal" :gif="selectedGif" />
   </q-page>
 </template>
