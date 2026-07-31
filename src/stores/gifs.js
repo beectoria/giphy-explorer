@@ -1,17 +1,18 @@
 import { defineStore } from 'pinia'
-import { fetchTrendingGifs, searchGifs } from 'src/services/giphy/giphyGifs'
+import { fetchTrendingGifs, searchGifs } from '@/services/giphy/giphyGifs'
 
 export const useGifsStore = defineStore('gifs', {
   state: () => ({
-    trending: [],       
-    searchResults: [],  
-    searchTerm: '',     
-    loading: false,     
-    error: null         
+    trending: [],
+    searchResults: [],
+    searchTerm: '',
+    loading: false,
+    error: null
   }),
 
   getters: {
-    gifsToDisplay: (state) => (state.searchTerm ? state.searchResults : state.trending)
+    gifsToDisplay: state =>
+      state.searchTerm ? state.searchResults : state.trending
   },
 
   actions: {
@@ -22,6 +23,7 @@ export const useGifsStore = defineStore('gifs', {
         const { data } = await fetchTrendingGifs()
         this.trending = data
       } catch (e) {
+        console.error(e)
         this.error = 'Não foi possível carregar os GIFs em alta.'
       } finally {
         this.loading = false
@@ -42,6 +44,7 @@ export const useGifsStore = defineStore('gifs', {
         const { data } = await searchGifs(term)
         this.searchResults = data
       } catch (e) {
+        console.error(e)
         this.error = 'Erro ao buscar GIFs.'
       } finally {
         this.loading = false

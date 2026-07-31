@@ -1,5 +1,8 @@
 import { defineStore } from 'pinia'
-import { fetchCategories, fetchGifsByCategory } from 'src/services/giphy/giphyCategories'
+import {
+  fetchCategories,
+  fetchGifsByCategory
+} from '@/services/giphy/giphyCategories'
 
 export const useCategoriesStore = defineStore('categories', {
   state: () => ({
@@ -17,6 +20,7 @@ export const useCategoriesStore = defineStore('categories', {
         const { data } = await fetchCategories()
         this.list = data
       } catch (e) {
+        console.error(e)
         this.error = 'Não foi possível carregar as categorias.'
       } finally {
         this.loading = false
@@ -30,6 +34,7 @@ export const useCategoriesStore = defineStore('categories', {
         const { data } = await fetchGifsByCategory(name)
         this.activeCategoryGifs = data
       } catch (e) {
+        console.error(e)
         this.error = 'Não foi possível carregar os GIFs dessa categoria.'
       } finally {
         this.loading = false
