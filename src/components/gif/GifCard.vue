@@ -22,7 +22,7 @@ function toggleFavorite() {
     <img
       :src="gif.images.fixed_height.url"
       :alt="gif.title"
-      class="w-full object-cover cursor-pointer"
+      class="w-full h-56 object-cover cursor-pointer"
       @click="emit('open-details', gif)"
     />
     <q-btn
