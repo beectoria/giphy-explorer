@@ -7,7 +7,7 @@ export const useGifsStore = defineStore('gifs', {
   state: () => ({
     trending: [],
     searchResults: [],
-    searchTerm: '',
+    isSearchMode: false,
     loading: false,
     error: null,
     currentPage: 1,
@@ -15,11 +15,12 @@ export const useGifsStore = defineStore('gifs', {
   }),
   getters: {
     gifsToDisplay: state =>
-      state.searchTerm ? state.searchResults : state.trending,
+      state.isSearchMode ? state.searchResults : state.trending,
     totalPages: state => Math.max(1, Math.ceil(state.totalCount / PAGE_SIZE))
   },
   actions: {
     async loadTrending(page = 1) {
+      this.isSearchMode = false
       this.loading = true
       this.error = null
       this.currentPage = page
@@ -38,13 +39,8 @@ export const useGifsStore = defineStore('gifs', {
       }
     },
     async search(term, page = 1) {
-      this.searchTerm = term
+      this.isSearchMode = true
       this.currentPage = page
-      if (!term) {
-        this.searchResults = []
-        this.totalCount = 0
-        return
-      }
       this.loading = true
       this.error = null
       try {
