@@ -1,92 +1,69 @@
+<script setup>
+import { ref } from 'vue'
+
+const leftDrawerOpen = ref(true)
+
+function toggleLeftDrawer() {
+  leftDrawerOpen.value = !leftDrawerOpen.value
+}
+
+const menuItems = [
+  { label: 'Home', icon: 'home', to: '/' },
+  { label: 'Favoritos', icon: 'favorite', to: '/favoritos' },
+  { label: 'Categorias', icon: 'category', to: '/categorias' },
+  { label: 'Sobre', icon: 'info', to: '/sobre' }
+]
+</script>
+
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+    <!-- Topbar -->
+    <q-header elevated class="bg-white text-gray-800 shadow-sm">
       <q-toolbar>
         <q-btn
-          flat
-          dense
-          round
+          flat dense round
           icon="menu"
-          aria-label="Menu"
+          class="text-gray-700"
           @click="toggleLeftDrawer"
         />
-
-        <q-toolbar-title> Quasar App </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+        <q-toolbar-title class="flex items-center gap-2">
+          <span class="text-xl font-bold text-purple-600">GIPHY Explorer</span>
+        </q-toolbar-title>
+        <div class="text-sm text-gray-500">
+          Desenvolvido por <span class="font-semibold">Victória</span>
+        </div>
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <q-list>
-        <q-item-label header> Essential Links </q-item-label>
-
-        <EssentialLink
-          v-for="link in linksList"
-          :key="link.label"
-          v-bind="link"
-        />
+    <!-- Navbar lateral -->
+    <q-drawer
+      v-model="leftDrawerOpen"
+      show-if-above
+      bordered
+      class="bg-gray-50"
+    >
+      <q-list padding>
+        <q-item
+          v-for="item in menuItems"
+          :key="item.label"
+          :to="item.to"
+          clickable
+          v-ripple
+          exact
+        >
+          <q-item-section avatar>
+            <q-icon :name="item.icon" />
+          </q-item-section>
+          <q-item-section>
+            {{ item.label }}
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
+    <!-- Conteúdo da página ativa -->
     <q-page-container>
       <router-view />
     </q-page-container>
   </q-layout>
 </template>
-
-<script setup>
-import { ref } from 'vue'
-import EssentialLink from '@/components/EssentialLink.vue'
-
-const linksList = [
-  {
-    label: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    label: 'GitHub',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    label: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    label: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    label: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    label: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    label: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-]
-
-const leftDrawerOpen = ref(false)
-
-function toggleLeftDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value
-}
-</script>
