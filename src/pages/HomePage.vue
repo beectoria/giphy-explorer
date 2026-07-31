@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue'
 import { useGifsStore } from '@/stores/gifs'
 import GifCard from '@/components/gif/GifCard.vue'
 import GifDetailsModal from '@/components/gif/GifDetailsModal.vue'
+import PaginationControls from '@/components/common/PaginationControls.vue'
 
 const gifsStore = useGifsStore()
 
@@ -17,6 +18,11 @@ function openDetails(gif) {
   selectedGif.value = gif
   showModal.value = true
 }
+
+function changePage(page) {
+  gifsStore.loadTrending(page)
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
 </script>
 
 <template>
@@ -28,14 +34,22 @@ function openDetails(gif) {
       gifsStore.error
     }}</div>
 
-    <div v-else class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <GifCard
-        v-for="gif in gifsStore.gifsToDisplay"
-        :key="gif.id"
-        :gif="gif"
-        @open-details="openDetails"
+    <template v-else>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <GifCard
+          v-for="gif in gifsStore.gifsToDisplay"
+          :key="gif.id"
+          :gif="gif"
+          @open-details="openDetails"
+        />
+      </div>
+
+      <PaginationControls
+        :current-page="gifsStore.currentPage"
+        :total-pages="gifsStore.totalPages"
+        @change-page="changePage"
       />
-    </div>
+    </template>
 
     <GifDetailsModal v-model="showModal" :gif="selectedGif" />
   </q-page>
