@@ -10,7 +10,6 @@ import PaginationControls from '@/components/common/PaginationControls.vue'
 const categoriesStore = useCategoriesStore()
 const searchStore = useSearchStore()
 
-const selectedCategory = ref(null)
 const showModal = ref(false)
 const selectedGif = ref(null)
 
@@ -18,19 +17,8 @@ onMounted(() => {
   categoriesStore.loadCategories()
 })
 
-function selectCategory(category) {
-  selectedCategory.value = category
-  categoriesStore.loadGifsByCategory(category.name, {
-    searchTerm: searchStore.term
-  })
-}
-
-function backToCategories() {
-  selectedCategory.value = null
-}
-
 function changePage(page) {
-  categoriesStore.loadGifsByCategory(categoriesStore.activeCategoryName, {
+  categoriesStore.selectCategory(categoriesStore.activeCategory, {
     page,
     searchTerm: searchStore.term
   })
@@ -45,8 +33,8 @@ function openDetails(gif) {
 watch(
   () => searchStore.term,
   term => {
-    if (!selectedCategory.value) return
-    categoriesStore.loadGifsByCategory(categoriesStore.activeCategoryName, {
+    if (!categoriesStore.hasSelection) return
+    categoriesStore.selectCategory(categoriesStore.activeCategory, {
       page: 1,
       searchTerm: term
     })
@@ -57,11 +45,17 @@ watch(
 <template>
   <q-page class="q-pa-md">
     <!-- Modo: grid de GIFs de uma categoria selecionada -->
-    <div v-if="selectedCategory">
+    <div v-if="categoriesStore.hasSelection">
       <div class="flex items-center gap-2 mb-4">
-        <q-btn flat dense round icon="arrow_back" @click="backToCategories" />
+        <q-btn
+          flat
+          dense
+          round
+          icon="arrow_back"
+          @click="categoriesStore.clearSelection()"
+        />
         <h1 class="text-2xl font-bold text-gray-800">
-          {{ selectedCategory.name }}
+          {{ categoriesStore.activeCategory.name }}
           <span
             v-if="searchStore.term"
             class="text-base font-normal text-gray-500"
@@ -113,7 +107,11 @@ watch(
           v-for="cat in categoriesStore.list"
           :key="cat.name"
           :category="cat"
-          @select="selectCategory"
+          @select="
+            categoriesStore.selectCategory(cat, {
+              searchTerm: searchStore.term
+            })
+          "
         />
       </div>
     </div>

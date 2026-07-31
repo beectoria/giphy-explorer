@@ -10,14 +10,15 @@ export const useCategoriesStore = defineStore('categories', {
   state: () => ({
     list: [],
     activeCategoryGifs: [],
-    activeCategoryName: '',
+    activeCategory: null,
     currentPage: 1,
     totalCount: 0,
     loading: false,
     error: null
   }),
   getters: {
-    totalPages: state => Math.max(1, Math.ceil(state.totalCount / PAGE_SIZE))
+    totalPages: state => Math.max(1, Math.ceil(state.totalCount / PAGE_SIZE)),
+    hasSelection: state => state.activeCategory !== null
   },
   actions: {
     async loadCategories() {
@@ -33,12 +34,14 @@ export const useCategoriesStore = defineStore('categories', {
         this.loading = false
       }
     },
-    async loadGifsByCategory(name, { page = 1, searchTerm = '' } = {}) {
-      this.activeCategoryName = name
+    async selectCategory(category, { page = 1, searchTerm = '' } = {}) {
+      this.activeCategory = category
       this.currentPage = page
       this.loading = true
       this.error = null
-      const query = searchTerm ? `${name} ${searchTerm}` : name
+      const query = searchTerm
+        ? `${category.name} ${searchTerm}`
+        : category.name
       try {
         const { data, pagination } = await fetchGifsByCategory(query, {
           limit: PAGE_SIZE,
@@ -52,6 +55,10 @@ export const useCategoriesStore = defineStore('categories', {
       } finally {
         this.loading = false
       }
+    },
+    clearSelection() {
+      this.activeCategory = null
+      this.activeCategoryGifs = []
     }
   }
 })

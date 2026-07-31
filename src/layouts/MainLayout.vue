@@ -1,14 +1,24 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
+import { useRoute } from 'vue-router'
 import { useSearchStore } from '@/stores/search'
+import { useCategoriesStore } from '@/stores/categories'
 
+const route = useRoute()
 const leftDrawerOpen = ref(true)
 const searchInput = ref('')
 const searchStore = useSearchStore()
+const categoriesStore = useCategoriesStore()
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value
 }
+
+const showSearch = computed(() => {
+  if (route.name === 'about') return false
+  if (route.name === 'categories') return categoriesStore.hasSelection
+  return true
+})
 
 let debounceTimer = null
 watch(searchInput, value => {
@@ -44,6 +54,7 @@ const menuItems = [
         </q-toolbar-title>
 
         <q-input
+          v-if="showSearch"
           v-model="searchInput"
           dense
           outlined
@@ -57,6 +68,7 @@ const menuItems = [
             <q-icon name="search" />
           </template>
         </q-input>
+        <div v-else class="flex-1" />
 
         <div class="text-sm text-gray-500 ml-4">
           Desenvolvido por <span class="font-semibold">Victória</span>
