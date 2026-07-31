@@ -59,6 +59,10 @@ export default defineConfig((/* ctx */) => {
             rewrite: path => path.replace(/^\/giphy-api/, '')
           }
         }
+        viteConf.server.headers = {
+          'Content-Security-Policy':
+            "default-src 'self'; connect-src 'self' ws://localhost:*; img-src 'self' data: https://*.giphy.com; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';"
+        }
       }
 
       // viteVuePluginOptions: {},
