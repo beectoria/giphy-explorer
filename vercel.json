@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/giphy-api/:path*",
+      "destination": "https://api.giphy.com/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
