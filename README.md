@@ -2,8 +2,7 @@
 
 Aplicação web desenvolvida como teste técnico para a **SGBR® Sistemas**, que consome a API do [GIPHY](https://developers.giphy.com) e permite aos usuários visualizar, buscar, navegar por categorias e favoritar GIFs.
 
-🔗 **Deploy:** [giphy-explorer-4xxpl0uj2-beectoria1.vercel.app](https://giphy-explorer-4xxpl0uj2-beectoria1.vercel.app/#/)
-📦 **Repositório:** [github.com/beectoria/giphy-explorer](https://github.com/beectoria/giphy-explorer)
+📦 **Repositório:** https://github.com/beectoria/giphy-explorer
 
 ---
 
@@ -29,14 +28,14 @@ Aplicação web desenvolvida como teste técnico para a **SGBR® Sistemas**, que
 
 ## 📁 Estrutura do projeto
 
-```
+```text
 src/
-├── boot/           # arquivos de inicialização (pinia, axios, etc.)
-├── components/      # componentes reutilizáveis (cards, modais, etc.)
+├── boot/             # arquivos de inicialização (pinia, axios, etc.)
+├── components/       # componentes reutilizáveis (cards, modais, etc.)
 ├── layouts/          # layout principal (navbar + topbar)
-├── pages/           # views/páginas (Home, Favoritos, Categorias, Sobre)
+├── pages/            # views/páginas (Home, Favoritos, Categorias, Sobre)
 ├── router/           # configuração de rotas
-├── services/        # clientes/serviços de API (ex: giphyClient, giphyGifs)
+├── services/         # clientes/serviços de API
 ├── stores/           # stores Pinia (estado global, favoritos, gifs, categorias)
 └── css/              # estilos globais / configuração do Tailwind
 ```
@@ -45,7 +44,7 @@ src/
 
 - [Node.js](https://nodejs.org) 18+ (recomendado 20+)
 - [pnpm](https://pnpm.io) (ou npm/yarn, se preferir)
-- Uma chave de API gratuita do GIPHY, gerada em [developers.giphy.com](https://developers.giphy.com)
+- Uma chave de API gratuita do GIPHY, gerada em https://developers.giphy.com
 
 ## 🚀 Como rodar o projeto localmente
 
@@ -60,7 +59,8 @@ cd giphy-explorer
 
 ```bash
 pnpm install
-# ou: npm install / yarn install
+# ou: npm install
+# ou: yarn install
 ```
 
 ### 3. Configure a variável de ambiente
@@ -75,39 +75,40 @@ cp .env.example .env
 copy .env.example .env
 ```
 
-Abra o `.env` e insira sua chave do GIPHY:
+Abra o arquivo `.env` e insira sua chave da API do GIPHY:
 
-```
+```env
 QCLI_GIPHY_API_KEY=sua_chave_aqui
 ```
 
-> ⚠️ **Atenção ao prefixo:** este projeto usa `@quasar/app-vite`, cujo prefixo padrão para variáveis expostas ao client é `QCLI_` (e não `VITE_`, como em projetos Vite "puros"). Se a variável não seguir esse prefixo, ela não estará disponível em `import.meta.env` e as requisições à API retornarão erro 401.
+> **Importante:** este projeto utiliza o prefixo `QCLI_` para expor variáveis de ambiente ao cliente. Caso utilize outro prefixo, a chave não ficará disponível em `import.meta.env`, causando falha nas requisições à API.
 
-### 4. Rode o servidor de desenvolvimento
+### 4. Execute o projeto
 
 ```bash
 pnpm dev
 # ou: quasar dev
 ```
 
-A aplicação abrirá automaticamente em `http://localhost:9000` (ou outra porta disponível).
+A aplicação ficará disponível em `http://localhost:9000` (ou outra porta disponível).
 
-### 5. Build para produção
+### 5. Gerar a build de produção
 
 ```bash
 pnpm build
 # ou: quasar build
 ```
 
-## 🔑 Sobre a integração com o GIPHY
+## 🔑 Integração com a API do GIPHY
 
-As requisições à API do GIPHY passam por um proxy configurado no `quasar.config.js` (rota `/giphy-api` → `https://api.giphy.com`), evitando expor a URL da API diretamente e contornando eventuais restrições de CORS em desenvolvimento. A chave `api_key` é injetada automaticamente em todas as requisições através de um interceptor do Axios no `giphyClient`.
+As requisições à API do GIPHY utilizam um proxy configurado no `quasar.config.js` (`/giphy-api` → `https://api.giphy.com`), evitando problemas de CORS durante o desenvolvimento. A `api_key` é adicionada automaticamente às requisições por meio de um interceptor configurado no `giphyClient`.
 
 ## 👩‍💻 Autora
 
 **Victória Maciel**
-🔗 [github.com/beectoria](https://github.com/beectoria)
+
+GitHub: https://github.com/beectoria
 
 ---
 
-Projeto desenvolvido como parte do processo seletivo de Programador(a) Web Front-end da SGBR® Sistemas.
+Projeto desenvolvido como parte do processo seletivo para a vaga de **Programador(a) Web Front-end** da **SGBR® Sistemas**.
