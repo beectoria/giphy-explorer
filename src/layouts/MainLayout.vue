@@ -39,7 +39,7 @@ const menuItems = [
 </script>
 
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="hHh lpR fFf">
     <AppTopbar
       v-model:search-term="searchInput"
       :show-search="showSearch"

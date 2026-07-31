@@ -1,23 +1,13 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { useFavoritesStore } from '@/stores/favorites'
-import { useSearchStore } from '@/stores/search'
 import GifCard from '@/components/gif/GifCard.vue'
 import GifDetailsModal from '@/components/gif/GifDetailsModal.vue'
 
 const favoritesStore = useFavoritesStore()
-const searchStore = useSearchStore()
 
 const showModal = ref(false)
 const selectedGif = ref(null)
-
-const filteredFavorites = computed(() => {
-  const term = searchStore.term.toLowerCase()
-  if (!term) return favoritesStore.favorites
-  return favoritesStore.favorites.filter(gif =>
-    gif.title?.toLowerCase().includes(term)
-  )
-})
 
 function openDetails(gif) {
   selectedGif.value = gif
@@ -26,26 +16,34 @@ function openDetails(gif) {
 </script>
 
 <template>
-  <q-page class="q-pa-md">
-    <h1 class="text-2xl font-bold text-gray-800 mb-4">Meus Favoritos</h1>
+  <q-page>
+    <section class="max-w-7xl mx-auto">
+      <h1 class="text-4xl md:text-5xl font-light text-slate-800 mb-8">
+        Meus Favoritos
+      </h1>
 
-    <div v-if="favoritesStore.count === 0" class="text-gray-500">
-      Você ainda não favoritou nenhum GIF.
-    </div>
+      <div class="bg-white rounded-xl shadow-sm p-6">
+        <div
+          v-if="favoritesStore.count === 0"
+          class="text-center py-16 text-slate-500"
+        >
+          Você ainda não favoritou nenhum GIF.
+        </div>
 
-    <div v-else-if="filteredFavorites.length === 0" class="text-gray-500">
-      Nenhum favorito encontrado para "{{ searchStore.term }}".
-    </div>
+        <div
+          v-else
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+        >
+          <GifCard
+            v-for="gif in favoritesStore.favorites"
+            :key="gif.id"
+            :gif="gif"
+            @open-details="openDetails"
+          />
+        </div>
+      </div>
 
-    <div v-else class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <GifCard
-        v-for="gif in filteredFavorites"
-        :key="gif.id"
-        :gif="gif"
-        @open-details="openDetails"
-      />
-    </div>
-
-    <GifDetailsModal v-model="showModal" :gif="selectedGif" />
+      <GifDetailsModal v-model="showModal" :gif="selectedGif" />
+    </section>
   </q-page>
 </template>
