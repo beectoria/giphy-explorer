@@ -1,10 +1,12 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useFavoritesStore } from '@/stores/favorites'
+import { useSearchStore } from '@/stores/search'
 import GifCard from '@/components/gif/GifCard.vue'
 import GifDetailsModal from '@/components/gif/GifDetailsModal.vue'
 
 const favoritesStore = useFavoritesStore()
+const searchStore = useSearchStore()
 
 const showModal = ref(false)
 const selectedGif = ref(null)
@@ -13,6 +15,18 @@ function openDetails(gif) {
   selectedGif.value = gif
   showModal.value = true
 }
+
+const filteredFavorites = computed(() => {
+  const term = searchStore.term.trim().toLowerCase()
+
+  if (!term) {
+    return favoritesStore.favorites
+  }
+
+  return favoritesStore.favorites.filter(gif =>
+    (gif.title || '').toLowerCase().includes(term)
+  )
+})
 </script>
 
 <template>
@@ -24,10 +38,14 @@ function openDetails(gif) {
 
       <div class="bg-white rounded-xl shadow-sm p-6">
         <div
-          v-if="favoritesStore.count === 0"
+          v-if="filteredFavorites.length === 0"
           class="text-center py-16 text-slate-500"
         >
-          Você ainda não favoritou nenhum GIF.
+          {{
+            favoritesStore.count === 0
+              ? 'Você ainda não favoritou nenhum GIF.'
+              : 'Nenhum favorito encontrado para essa busca.'
+          }}
         </div>
 
         <div
@@ -35,7 +53,7 @@ function openDetails(gif) {
           class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
         >
           <GifCard
-            v-for="gif in favoritesStore.favorites"
+            v-for="gif in filteredFavorites"
             :key="gif.id"
             :gif="gif"
             @open-details="openDetails"
