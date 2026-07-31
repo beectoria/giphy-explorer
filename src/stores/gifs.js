@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import { fetchTrendingGifs, searchGifs } from '@/services/giphy/giphyGifs'
-
-const PAGE_SIZE = 24
+import { PAGE_SIZE } from '@/utils/constants'
 
 export const useGifsStore = defineStore('gifs', {
   state: () => ({

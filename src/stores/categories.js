@@ -3,8 +3,7 @@ import {
   fetchCategories,
   fetchGifsByCategory
 } from '@/services/giphy/giphyCategories'
-
-const PAGE_SIZE = 24
+import { PAGE_SIZE } from '@/utils/constants'
 
 export const useCategoriesStore = defineStore('categories', {
   state: () => ({
