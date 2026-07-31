@@ -49,8 +49,10 @@ const menuItems = [
 
     <AppSidebar v-model="leftDrawerOpen" :menu-items="menuItems" />
 
-    <q-page-container class="bg-[#f1f3f6]">
-      <router-view />
+    <q-page-container class="bg-[#f4f6fb]">
+      <div class="p-6 md:p-8">
+        <router-view />
+      </div>
     </q-page-container>
   </q-layout>
 </template>
