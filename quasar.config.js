@@ -40,7 +40,7 @@ export default defineConfig((/* ctx */) => {
       // https://v2.quasar.dev/quasar-cli-vite/page-routing-with-vue-router#filename-based-routing
       // filenameBasedRouting: true,
 
-      vueRouterMode: 'hash' // available values: 'hash', 'history'
+      vueRouterMode: 'hash', // available values: 'hash', 'history'
       // vueRouterBase,
 
       // publicPath: '/',
@@ -50,7 +50,17 @@ export default defineConfig((/* ctx */) => {
       // minify: false,
       // distDir
 
-      // extendViteConf (viteConf) {},
+      extendViteConf(viteConf) {
+        viteConf.server = viteConf.server || {}
+        viteConf.server.proxy = {
+          '/giphy-api': {
+            target: 'https://api.giphy.com',
+            changeOrigin: true,
+            rewrite: path => path.replace(/^\/giphy-api/, '')
+          }
+        }
+      }
+
       // viteVuePluginOptions: {},
 
       // vitePlugins: [
