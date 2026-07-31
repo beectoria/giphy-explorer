@@ -33,13 +33,14 @@ export const useCategoriesStore = defineStore('categories', {
         this.loading = false
       }
     },
-    async loadGifsByCategory(name, page = 1) {
+    async loadGifsByCategory(name, { page = 1, searchTerm = '' } = {}) {
       this.activeCategoryName = name
       this.currentPage = page
       this.loading = true
       this.error = null
+      const query = searchTerm ? `${name} ${searchTerm}` : name
       try {
-        const { data, pagination } = await fetchGifsByCategory(name, {
+        const { data, pagination } = await fetchGifsByCategory(query, {
           limit: PAGE_SIZE,
           offset: (page - 1) * PAGE_SIZE
         })

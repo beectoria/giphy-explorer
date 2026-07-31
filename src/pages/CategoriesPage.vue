@@ -1,12 +1,14 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useCategoriesStore } from '@/stores/categories'
+import { useSearchStore } from '@/stores/search'
 import CategoryCard from '@/components/category/CategoryCard.vue'
 import GifCard from '@/components/gif/GifCard.vue'
 import GifDetailsModal from '@/components/gif/GifDetailsModal.vue'
 import PaginationControls from '@/components/common/PaginationControls.vue'
 
 const categoriesStore = useCategoriesStore()
+const searchStore = useSearchStore()
 
 const selectedCategory = ref(null)
 const showModal = ref(false)
@@ -18,7 +20,9 @@ onMounted(() => {
 
 function selectCategory(category) {
   selectedCategory.value = category
-  categoriesStore.loadGifsByCategory(category.name)
+  categoriesStore.loadGifsByCategory(category.name, {
+    searchTerm: searchStore.term
+  })
 }
 
 function backToCategories() {
@@ -26,7 +30,10 @@ function backToCategories() {
 }
 
 function changePage(page) {
-  categoriesStore.loadGifsByCategory(categoriesStore.activeCategoryName, page)
+  categoriesStore.loadGifsByCategory(categoriesStore.activeCategoryName, {
+    page,
+    searchTerm: searchStore.term
+  })
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
@@ -34,6 +41,17 @@ function openDetails(gif) {
   selectedGif.value = gif
   showModal.value = true
 }
+
+watch(
+  () => searchStore.term,
+  term => {
+    if (!selectedCategory.value) return
+    categoriesStore.loadGifsByCategory(categoriesStore.activeCategoryName, {
+      page: 1,
+      searchTerm: term
+    })
+  }
+)
 </script>
 
 <template>
@@ -44,6 +62,12 @@ function openDetails(gif) {
         <q-btn flat dense round icon="arrow_back" @click="backToCategories" />
         <h1 class="text-2xl font-bold text-gray-800">
           {{ selectedCategory.name }}
+          <span
+            v-if="searchStore.term"
+            class="text-base font-normal text-gray-500"
+          >
+            + "{{ searchStore.term }}"
+          </span>
         </h1>
       </div>
 
@@ -52,6 +76,12 @@ function openDetails(gif) {
       >
       <div v-else-if="categoriesStore.error" class="text-red-500">
         {{ categoriesStore.error }}
+      </div>
+      <div
+        v-else-if="categoriesStore.activeCategoryGifs.length === 0"
+        class="text-gray-500"
+      >
+        Nenhum GIF encontrado para essa busca.
       </div>
       <template v-else>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
