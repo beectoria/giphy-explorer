@@ -4,6 +4,7 @@ import { useCategoriesStore } from '@/stores/categories'
 import CategoryCard from '@/components/category/CategoryCard.vue'
 import GifCard from '@/components/gif/GifCard.vue'
 import GifDetailsModal from '@/components/gif/GifDetailsModal.vue'
+import PaginationControls from '@/components/common/PaginationControls.vue'
 
 const categoriesStore = useCategoriesStore()
 
@@ -22,6 +23,11 @@ function selectCategory(category) {
 
 function backToCategories() {
   selectedCategory.value = null
+}
+
+function changePage(page) {
+  categoriesStore.loadGifsByCategory(categoriesStore.activeCategoryName, page)
+  window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 function openDetails(gif) {
@@ -47,14 +53,22 @@ function openDetails(gif) {
       <div v-else-if="categoriesStore.error" class="text-red-500">
         {{ categoriesStore.error }}
       </div>
-      <div v-else class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <GifCard
-          v-for="gif in categoriesStore.activeCategoryGifs"
-          :key="gif.id"
-          :gif="gif"
-          @open-details="openDetails"
+      <template v-else>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <GifCard
+            v-for="gif in categoriesStore.activeCategoryGifs"
+            :key="gif.id"
+            :gif="gif"
+            @open-details="openDetails"
+          />
+        </div>
+
+        <PaginationControls
+          :current-page="categoriesStore.currentPage"
+          :total-pages="categoriesStore.totalPages"
+          @change-page="changePage"
         />
-      </div>
+      </template>
     </div>
 
     <!-- Modo: lista de categorias -->

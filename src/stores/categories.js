@@ -4,14 +4,21 @@ import {
   fetchGifsByCategory
 } from '@/services/giphy/giphyCategories'
 
+const PAGE_SIZE = 24
+
 export const useCategoriesStore = defineStore('categories', {
   state: () => ({
     list: [],
     activeCategoryGifs: [],
+    activeCategoryName: '',
+    currentPage: 1,
+    totalCount: 0,
     loading: false,
     error: null
   }),
-
+  getters: {
+    totalPages: state => Math.max(1, Math.ceil(state.totalCount / PAGE_SIZE))
+  },
   actions: {
     async loadCategories() {
       this.loading = true
@@ -26,13 +33,18 @@ export const useCategoriesStore = defineStore('categories', {
         this.loading = false
       }
     },
-
-    async loadGifsByCategory(name) {
+    async loadGifsByCategory(name, page = 1) {
+      this.activeCategoryName = name
+      this.currentPage = page
       this.loading = true
       this.error = null
       try {
-        const { data } = await fetchGifsByCategory(name)
+        const { data, pagination } = await fetchGifsByCategory(name, {
+          limit: PAGE_SIZE,
+          offset: (page - 1) * PAGE_SIZE
+        })
         this.activeCategoryGifs = data
+        this.totalCount = pagination.total_count
       } catch (e) {
         console.error(e)
         this.error = 'Não foi possível carregar os GIFs dessa categoria.'
